@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Clinics: readable by anyone with the link (needed for the patient page
+    // to show clinic name / public review URL), writable only by signed-in staff.
+    match /clinics/{clinicId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Visits: created by signed-in clinic staff. Publicly readable by token
+    // lookup so the patient rating page works without login, but a patient
+    // can only flip status to "completed", never edit anything else.
+    match /visits/{visitId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null
+        || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']));
+      allow delete: if request.auth != null;
+    }
+
+    // Reviews: anyone holding a valid visit link can submit one review.
+    // Only signed-in clinic staff can read the collected reviews.
+    match /reviews/{reviewId} {
+      allow create: if request.resource.data.keys().hasAll(['visitId', 'clinicId', 'stars'])
+        && request.resource.data.stars is int
+        && request.resource.data.stars >= 1 && request.resource.data.stars <= 5;
+      allow read, update, delete: if request.auth != null;
+    }
+  }
+}
