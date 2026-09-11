@@ -8,7 +8,6 @@ import {
   updateDoc,
   query,
   where,
-  orderBy,
   onSnapshot,
   serverTimestamp,
   getDocs,
@@ -92,14 +91,19 @@ export async function submitReview({ visitId, clinicId, stars, comment }) {
 }
 
 export function watchReviews(clinicId, cb) {
-  const q = query(
-    collection(db, "reviews"),
-    where("clinicId", "==", clinicId),
-    orderBy("createdAt", "desc")
+  // No orderBy here on purpose: combining an equality filter with orderBy on
+  // a different field requires a Firestore composite index. Sorting the
+  // (small) result set client-side avoids needing to manage that index.
+  const q = query(collection(db, "reviews"), where("clinicId", "==", clinicId));
+  return onSnapshot(
+    q,
+    (snap) => {
+      const reviews = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      reviews.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+      cb(reviews);
+    },
+    (err) => console.error("watchReviews error:", err)
   );
-  return onSnapshot(q, (snap) => {
-    cb(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
-  });
 }
 
 // ---------- Clinic ----------
