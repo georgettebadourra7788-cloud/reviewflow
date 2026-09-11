@@ -22,12 +22,12 @@ import {
 
 // TODO: replace with your Firebase project config (Project Settings > General > Your apps)
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID",
+  apiKey: "AIzaSyCtmTwP1lypJOObApYIg7s1YrbMqrGM2N0",
+  authDomain: "reviewflow-46f68.firebaseapp.com",
+  projectId: "reviewflow-46f68",
+  storageBucket: "reviewflow-46f68.firebasestorage.app",
+  messagingSenderId: "666682604036",
+  appId: "1:666682604036:web:ec4e18ddd71a91312d1351",
 };
 
 const app = initializeApp(firebaseConfig);
