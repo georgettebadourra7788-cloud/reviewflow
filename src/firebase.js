@@ -33,6 +33,12 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 
+// Hardcoded for now — avoids depending on a separate clinics/{id} document
+// lookup, which has been unreliable. Edit these two lines directly to
+// change the clinic name / review link shown on the patient page.
+export const CLINIC_NAME = "Test Clinic";
+export const CLINIC_PUBLIC_REVIEW_URL = "https://google.com";
+
 // ---------- Auth ----------
 export function loginClinic(email, password) {
   return signInWithEmailAndPassword(auth, email, password);

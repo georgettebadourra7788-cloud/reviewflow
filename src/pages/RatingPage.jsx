@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import StarRating from "../components/StarRating";
-import { getVisitByToken, submitReview, getClinic } from "../firebase";
+import { getVisitByToken, submitReview, CLINIC_NAME, CLINIC_PUBLIC_REVIEW_URL } from "../firebase";
 
 export default function RatingPage() {
   const { token } = useParams();
   const [loadState, setLoadState] = useState("loading"); // loading | ready | notfound
   const [visit, setVisit] = useState(null);
-  const [clinic, setClinic] = useState(null);
   const [stars, setStars] = useState(0);
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -21,15 +20,6 @@ export default function RatingPage() {
         return;
       }
       setVisit(v);
-      if (v.clinicId) {
-        try {
-          const c = await getClinic(v.clinicId);
-          console.log("Clinic fetch result for", v.clinicId, ":", c);
-          setClinic(c);
-        } catch (err) {
-          console.error("Clinic fetch FAILED for", v.clinicId, ":", err);
-        }
-      }
       setLoadState("ready");
     })();
   }, [token]);
@@ -58,7 +48,7 @@ export default function RatingPage() {
     );
   }
 
-  const clinicName = clinic?.name || "Your Clinic";
+  const clinicName = CLINIC_NAME;
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-between antialiased">
@@ -131,9 +121,9 @@ export default function RatingPage() {
             <p className="text-sm text-slate-500 mb-6">
               We're so glad you had a great experience. Would you mind sharing this on Google too? It helps other patients find us.
             </p>
-            {clinic?.publicReviewUrl ? (
+            {CLINIC_PUBLIC_REVIEW_URL ? (
               <a
-                href={clinic.publicReviewUrl}
+                href={CLINIC_PUBLIC_REVIEW_URL}
                 target="_blank"
                 rel="noreferrer"
                 className="block w-full h-14 leading-[56px] rounded-2xl bg-brand-600 text-white font-semibold text-sm"
