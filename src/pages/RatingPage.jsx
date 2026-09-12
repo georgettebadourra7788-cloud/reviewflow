@@ -22,8 +22,13 @@ export default function RatingPage() {
       }
       setVisit(v);
       if (v.clinicId) {
-        const c = await getClinic(v.clinicId);
-        setClinic(c);
+        try {
+          const c = await getClinic(v.clinicId);
+          console.log("Clinic fetch result for", v.clinicId, ":", c);
+          setClinic(c);
+        } catch (err) {
+          console.error("Clinic fetch FAILED for", v.clinicId, ":", err);
+        }
       }
       setLoadState("ready");
     })();
